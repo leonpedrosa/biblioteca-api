@@ -32,7 +32,8 @@ class UserViewSet(ListModelMixin, CreateModelMixin, UpdateModelMixin,
                         "result": {
                             "user": "user@user.com",
                             "id": 1,
-                            "token": "95595f53771b1da5ad881e6cc2d68e49f8dfb1d6"
+                            "token": "95595f53771b1da5ad881e6cc2d68e49f8dfb1d6",
+                            "admin": False
                         }
                     }
                 }
@@ -82,6 +83,7 @@ class UserViewSet(ListModelMixin, CreateModelMixin, UpdateModelMixin,
                             'user': user.username,
                             'id': user.id,
                             'token': token.key,
+                            'admin': user.is_superuser
                         }
                     }
                 )
