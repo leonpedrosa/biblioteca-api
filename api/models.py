@@ -1,4 +1,26 @@
 from django.db import models
+from django.contrib.auth.models import User
+
+
+def user():
+    r = {
+        'id': '',
+        'nome': '',
+        'cpf': '',
+        'address': address(),
+        'phone1': '',
+        'phone2': '',
+        'phone_other1': '',
+        'phone_other2': '',
+        'whats': '',
+        'date_nasc': '',
+        'guardian': {
+            'id': '',
+            'name': '',
+            'cpf': '',
+            'address': address(),
+        }
+    }
 
 
 class BookRentalModel(models.Model):
@@ -8,6 +30,11 @@ class BookRentalModel(models.Model):
     itens = models.JSONField()
     late = models.BooleanField(default=True)
     delivered = models.BooleanField()
+    client = models.JSONField()
+
+    class Meta:
+        verbose_name = 'Aluguel'
+        verbose_name_plural = 'Alugueis'
 
 
 def address():
@@ -32,6 +59,9 @@ class GuardianModel(models.Model):
     whats = models.CharField(max_length=14)
     date_nasc = models.CharField(max_length=14)
 
+    class Meta:
+        verbose_name = 'Responsável'
+        verbose_name_plural = 'Responsáveis'
 
 class ExtendUser(models.Model):
     id = models.AutoField(primary_key=True)
@@ -44,27 +74,40 @@ class ExtendUser(models.Model):
     whats = models.CharField(max_length=14)
     date_nasc = models.CharField(max_length=14)
     guardian = models.ForeignKey(GuardianModel, on_delete=models.PROTECT)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
 class BookPublisherModel(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
 
+    class Meta:
+        verbose_name = 'Editora'
+        verbose_name_plural = 'Editoras'
 
 class TypeItemModel(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
 
+    class Meta:
+        verbose_name = 'Tipo'
+        verbose_name_plural = 'Tipos'
 
 class CategoryItensModel(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
 
+    class Meta:
+        verbose_name = 'Categoria'
+        verbose_name_plural = 'Categorias'
 
 class BookAuthorModel(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
 
+    class Meta:
+        verbose_name = 'Author'
+        verbose_name_plural = 'Autores'
 
 class ItensModel(models.Model):
     id = models.AutoField(primary_key=True)
@@ -77,3 +120,6 @@ class ItensModel(models.Model):
     count = models.IntegerField()
     obs = models.TextField()
 
+    class Meta:
+        verbose_name = 'Item'
+        verbose_name_plural = 'Itens'
