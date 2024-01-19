@@ -75,6 +75,7 @@ if all([
     'PSQL_PASS' in os.environ,
     'PSQL_DB' in os.environ
 ]):
+    print('Use Postgres')
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -86,6 +87,7 @@ if all([
         }
     }
 else:
+    print('Use SQlite')
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
