@@ -1,5 +1,6 @@
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import *
+from rest_framework import permissions
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import action, permission_classes
 from drf_yasg.utils import swagger_auto_schema
@@ -8,12 +9,39 @@ from api.serializers import *
 from rest_framework.authtoken.models import Token
 from django.utils import timezone
 from datetime import timedelta
+from api.tasks import *
 
 
 class UserViewSet(ListModelMixin, CreateModelMixin, UpdateModelMixin,
                   RetrieveModelMixin, DestroyModelMixin, GenericViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [permissions.IsAdminUser,]
+
+    @swagger_auto_schema(
+        operation_summary='Forgot password',
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                "email": openapi.Schema(type=openapi.TYPE_STRING, format=openapi.FORMAT_EMAIL)
+            }
+        )
+    )
+    @action(methods=['post'], detail=False, url_path='forgot', pagination_class=None, permission_classes=[AllowAny])
+    def forgot(self, request):
+        email = request.data.get('email')
+        if email is not None:
+            try:
+                user = User.objects.get(email=email)
+            except User.DoesNotExist:
+                return Response({'error': 'Contact your system administrator'}, status=400)
+            except Exception as e:
+                return Response({'error': str(e)}, status=400)
+
+            forgot_send_email.delay(user_id=user.id)
+        else:
+            return Response({'error': 'key "email" mandatory'}, status=400)
+
 
     @swagger_auto_schema(
         operation_summary='Login',
@@ -66,7 +94,7 @@ class UserViewSet(ListModelMixin, CreateModelMixin, UpdateModelMixin,
             try:
                 user = User.objects.get(username=username)
             except User.DoesNotExist:
-                return Response({'result': {'error': 'user not found'}}, status=status.HTTP_404_NOT_FOUND)
+                return Response({'result': {'error': 'user not found'}}, status=status.HTTP_401_UNAUTHORIZED)
             except Exception as error:
                 return Response({'result': {'error': f'unknown error {str(error)}'}}, status=500)
 

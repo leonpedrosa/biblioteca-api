@@ -28,6 +28,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'django_celery_results',
+    'django_celery_beat',
     'corsheaders',
     'drf_yasg',
     'api',
@@ -161,3 +163,8 @@ SWAGGER_SETTINGS = {
 CORS_ALLOW_ALL_ORIGINS = True
 
 URL_API = os.environ.get('URL_API', 'http://127.0.0.1:8001')
+
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'amqp://localhost')
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_TIMEZONE = 'America/Recife'
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'

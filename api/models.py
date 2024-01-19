@@ -30,7 +30,7 @@ class BookRentalModel(models.Model):
     itens = models.JSONField()
     late = models.BooleanField(default=True)
     delivered = models.BooleanField()
-    client = models.JSONField()
+    client = models.JSONField(null=True)
 
     class Meta:
         verbose_name = 'Aluguel'
@@ -63,6 +63,7 @@ class GuardianModel(models.Model):
         verbose_name = 'Responsável'
         verbose_name_plural = 'Responsáveis'
 
+
 class ExtendUser(models.Model):
     id = models.AutoField(primary_key=True)
     cpf = models.CharField(max_length=14)
@@ -74,7 +75,7 @@ class ExtendUser(models.Model):
     whats = models.CharField(max_length=14)
     date_nasc = models.CharField(max_length=14)
     guardian = models.ForeignKey(GuardianModel, on_delete=models.PROTECT)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
 
 class BookPublisherModel(models.Model):
@@ -85,6 +86,7 @@ class BookPublisherModel(models.Model):
         verbose_name = 'Editora'
         verbose_name_plural = 'Editoras'
 
+
 class TypeItemModel(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
@@ -92,6 +94,7 @@ class TypeItemModel(models.Model):
     class Meta:
         verbose_name = 'Tipo'
         verbose_name_plural = 'Tipos'
+
 
 class CategoryItensModel(models.Model):
     id = models.AutoField(primary_key=True)
@@ -101,6 +104,7 @@ class CategoryItensModel(models.Model):
         verbose_name = 'Categoria'
         verbose_name_plural = 'Categorias'
 
+
 class BookAuthorModel(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
@@ -108,6 +112,7 @@ class BookAuthorModel(models.Model):
     class Meta:
         verbose_name = 'Author'
         verbose_name_plural = 'Autores'
+
 
 class ItensModel(models.Model):
     id = models.AutoField(primary_key=True)
