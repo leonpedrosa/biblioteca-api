@@ -74,8 +74,8 @@ class ExtendUser(models.Model):
     phone_other2 = models.CharField(max_length=14)
     whats = models.CharField(max_length=14)
     date_nasc = models.DateField()
-    guardian = models.ForeignKey(GuardianModel, on_delete=models.PROTECT)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    guardian = models.ForeignKey(GuardianModel, on_delete=models.PROTECT, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, default=None, null=True)
 
 
 class BookPublisherModel(models.Model):
