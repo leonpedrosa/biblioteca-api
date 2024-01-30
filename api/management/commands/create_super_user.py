@@ -22,12 +22,7 @@ class Command(BaseCommand):
             '-p', '--password',
             help='Password for the superuser',
             required=True
-        )
-        parser.add_argument(
-            '-d', '--document',
-            help='Document for the superuser, default is 00000000000',
-            default='00000000000'
-        )
+        )        
 
     def handle(self, *args, **options):
         User = get_user_model()
@@ -38,8 +33,7 @@ class Command(BaseCommand):
                 password=options['password']
             )
             ExtendUser.objects.create(
-                user=u,
-                document=options['document']
+                user=u                
             )
             self.stdout.write(self.style.SUCCESS('Superuser created successfully'))
         except django.db.utils.IntegrityError:
