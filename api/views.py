@@ -1,4 +1,4 @@
-from rest_framework.viewsets import GenericViewSet
+from rest_framework.viewsets import GenericViewSet, ModelViewSet
 from rest_framework.mixins import *
 from rest_framework import permissions
 from rest_framework.permissions import AllowAny
@@ -12,11 +12,67 @@ from datetime import timedelta
 from api.tasks import *
 
 
+class RentViewSet(ModelViewSet):
+    queryset = BookRentalModel.objects.all()
+    serializer_class = BookRentalModel
+
+
+class LogViewSet(ModelViewSet):
+    queryset = LogModel.objects.all()
+    serializer_class = LogSerializer
+    # filter_backends = [filters.SearchFilter, filters.OrderingFilter]
+    # search_fields = ['name']
+    # ordering_fields = '__all__'
+
+
 class UserViewSet(ListModelMixin, CreateModelMixin, UpdateModelMixin,
                   RetrieveModelMixin, DestroyModelMixin, GenericViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAdminUser,]
+
+
+    @swagger_auto_schema(
+        operation_summary='logout',
+        responses={
+            200: openapi.Response(
+                description='',
+                examples={
+                    "application/json": {
+                        "msg": "success",
+                        "error": None
+                    }
+                }
+            )
+        }
+    )
+    @action(methods=['get'], detail=False, url_path='logout')
+    def logout(self, request, *args, **kwargs):
+        try:
+            token = Token.objects.get(user_id=request.user.id)
+            token.delete()
+            return Response(
+                {
+                    "msg": "success",
+                    "error": None
+                }
+            )
+        except Token.DoesNotExist:
+            return Response(
+                {
+                    "msg": "error",
+                    "error": 'Token not exist'
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        except Exception as e:
+            return Response(
+                {
+                    "msg": "error",
+                    "error": str(e)
+                },
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
     @swagger_auto_schema(
         operation_summary='Forgot password',
@@ -61,7 +117,7 @@ class UserViewSet(ListModelMixin, CreateModelMixin, UpdateModelMixin,
                             "user": "user@user.com",
                             "id": 1,
                             "token": "95595f53771b1da5ad881e6cc2d68e49f8dfb1d6",
-                            "admin": False
+                            "superuser": False
                         }
                     }
                 }
@@ -111,7 +167,7 @@ class UserViewSet(ListModelMixin, CreateModelMixin, UpdateModelMixin,
                             'user': user.username,
                             'id': user.id,
                             'token': token.key,
-                            'admin': user.is_superuser
+                            'superuser': user.is_superuser,
                         }
                     }
                 )

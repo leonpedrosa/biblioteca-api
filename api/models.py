@@ -128,3 +128,11 @@ class ItensModel(models.Model):
     class Meta:
         verbose_name = 'Item'
         verbose_name_plural = 'Itens'
+
+
+class LogModel(models.Model):
+    id = models.AutoField(primary_key=True)
+
+    class Meta:
+        verbose_name = 'Log'
+        verbose_name_plural = 'Logs'
